@@ -9,11 +9,16 @@
 <body>
     <div class="container">
         <h1>Web YouTube Rahel Fragrance</h1>
+        <input type="text" id="search" placeholder="Search for videos...">
+        <button onclick="searchVideos()">Search</button>
         <div id="player"></div>
+        <div id="videos" class="videos"></div>
     </div>
 
     <!-- Script API YouTube -->
     <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- Script untuk memanggil API YouTube Data v3 -->
+    <script src="https://apis.google.com/js/api.js"></script>
     <!-- JavaScript -->
     <script src="script.js"></script>
 </body>
