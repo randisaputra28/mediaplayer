@@ -19,6 +19,33 @@ h1 {
     margin-bottom: 20px;
 }
 
+input[type="text"], button {
+    padding: 10px;
+    font-size: 16px;
+}
+
 #player {
     margin: 20px 0;
+}
+
+.videos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.video {
+    margin: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.video img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.2s;
+}
+
+.video img:hover {
+    transform: scale(1.1);
 }
