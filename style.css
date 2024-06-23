@@ -1,71 +1,91 @@
-// Fungsi untuk menginisialisasi API YouTube
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('player', {
-        height: '360',
-        width: '640',
-        videoId: '', // ID video akan dimasukkan saat video dipilih
-        events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-        }
-    });
+/* CSS untuk tata letak dan tampilan */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
 }
 
-// Fungsi ketika pemutar video siap
-function onPlayerReady(event) {
-    console.log('Player ready');
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-// Fungsi ketika status pemutar video berubah
-function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.PLAYING) {
-        console.log('Video sedang diputar');
-    } else if (event.data == YT.PlayerState.PAUSED) {
-        console.log('Video dijeda');
-    } else if (event.data == YT.PlayerState.ENDED) {
-        console.log('Video selesai');
-    }
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-// Fungsi untuk mencari video di YouTube
-function searchVideos() {
-    // Ambil nilai input pencarian
-    var query = document.getElementById('search').value.trim();
-
-    // Lakukan request ke API YouTube untuk mencari video
-    var request = gapi.client.youtube.search.list({
-        q: query,
-        part: 'snippet',
-        type: 'video',
-        maxResults: 10 // Jumlah maksimal video yang akan ditampilkan
-    });
-
-    // Lakukan eksekusi request
-    request.execute(function(response) {
-        console.log(response);
-        var videos = response.result.items;
-
-        // Tampilkan hasil pencarian dalam daftar
-        var videosContainer = document.getElementById('videos');
-        videosContainer.innerHTML = '';
-
-        videos.forEach(function(video) {
-            var videoItem = document.createElement('div');
-            videoItem.classList.add('video-item');
-            videoItem.innerHTML = `
-                <img src="${video.snippet.thumbnails.medium.url}" alt="${video.snippet.title}">
-                <div class="video-info">
-                    <h2>${video.snippet.title}</h2>
-                    <p>${video.snippet.description}</p>
-                    <button onclick="playVideo('${video.id.videoId}')">Play</button>
-                </div>
-            `;
-            videosContainer.appendChild(videoItem);
-        });
-    });
+form {
+    display: flex;
+    margin-bottom: 20px;
 }
 
-// Fungsi untuk memutar video yang dipilih
-function playVideo(videoId) {
-    player.loadVideoById(videoId);
+input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#player {
+    margin: 20px 0;
+}
+
+.video-item {
+    display: flex;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.video-item img {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.video-info {
+    flex: 1;
+}
+
+.video-info h2 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.video-info p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.video-info button {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.video-info button:hover {
+    background-color: #0056b3;
 }
