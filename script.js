@@ -1,46 +1,71 @@
-const API_KEY = 'YOUR_API_KEY';
-let player;
-
-// Fungsi ini dipanggil oleh API YouTube ketika API sudah siap
+// Fungsi untuk menginisialisasi API YouTube
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-        height: '450',
-        width: '800',
-        videoId: '',
+        height: '360',
+        width: '640',
+        videoId: '', // ID video akan dimasukkan saat video dipilih
         events: {
             'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
         }
     });
 }
 
+// Fungsi ketika pemutar video siap
 function onPlayerReady(event) {
-    console.log('Player is ready.');
+    console.log('Player ready');
 }
 
+// Fungsi ketika status pemutar video berubah
+function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.PLAYING) {
+        console.log('Video sedang diputar');
+    } else if (event.data == YT.PlayerState.PAUSED) {
+        console.log('Video dijeda');
+    } else if (event.data == YT.PlayerState.ENDED) {
+        console.log('Video selesai');
+    }
+}
+
+// Fungsi untuk mencari video di YouTube
 function searchVideos() {
-    const query = document.getElementById('search').value;
-    fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${query}&key=${API_KEY}`)
-        .then(response => response.json())
-        .then(data => {
-            const videos = document.getElementById('videos');
-            videos.innerHTML = '';
-            data.items.forEach(item => {
-                const videoId = item.id.videoId;
-                const title = item.snippet.title;
-                const thumbnail = item.snippet.thumbnails.high.url;
-                const videoElement = document.createElement('div');
-                videoElement.classList.add('video');
-                videoElement.innerHTML = `
-                    <img src="${thumbnail}" alt="${title}">
-                    <h4>${title}</h4>
-                `;
-                videoElement.onclick = () => playVideo(videoId);
-                videos.appendChild(videoElement);
-            });
-        })
-        .catch(error => console.error('Error fetching videos:', error));
+    // Ambil nilai input pencarian
+    var query = document.getElementById('search').value.trim();
+
+    // Lakukan request ke API YouTube untuk mencari video
+    var request = gapi.client.youtube.search.list({
+        q: query,
+        part: 'snippet',
+        type: 'video',
+        maxResults: 10 // Jumlah maksimal video yang akan ditampilkan
+    });
+
+    // Lakukan eksekusi request
+    request.execute(function(response) {
+        console.log(response);
+        var videos = response.result.items;
+
+        // Tampilkan hasil pencarian dalam daftar
+        var videosContainer = document.getElementById('videos');
+        videosContainer.innerHTML = '';
+
+        videos.forEach(function(video) {
+            var videoItem = document.createElement('div');
+            videoItem.classList.add('video-item');
+            videoItem.innerHTML = `
+                <img src="${video.snippet.thumbnails.medium.url}" alt="${video.snippet.title}">
+                <div class="video-info">
+                    <h2>${video.snippet.title}</h2>
+                    <p>${video.snippet.description}</p>
+                    <button onclick="playVideo('${video.id.videoId}')">Play</button>
+                </div>
+            `;
+            videosContainer.appendChild(videoItem);
+        });
+    });
 }
 
+// Fungsi untuk memutar video yang dipilih
 function playVideo(videoId) {
     player.loadVideoById(videoId);
 }
